@@ -5,7 +5,8 @@
 const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1';
 
 async function request(endpoint, options = {}) {
-  const url = endpoint.startsWith('http') ? endpoint : `${BASE_URL}${endpoint}`;
+  const base = options.baseURL !== undefined ? options.baseURL : BASE_URL;
+  const url = endpoint.startsWith('http') ? endpoint : `${base}${endpoint}`;
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,

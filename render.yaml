@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: agentassure
+    runtime: docker
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        value: sqlite:///./agentassure.db
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: SlowapiRateLimit
+        value: "true"
