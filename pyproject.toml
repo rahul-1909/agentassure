@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentassure"
+version = "1.0.0"
+description = "Human-in-the-Loop QA Workflow, Regression Testing & Closed-Loop Improvement System for Conversational AI"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "AgentAssure Core Engineering Team", email = "engineering@agentassure.internal" }
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Framework :: FastAPI",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+[project.scripts]
+agentassure = "agentassure.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["agentassure*"]
+
+[tool.black]
+line-length = 100
+target-version = ['py311', 'py312']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 100
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::UserWarning",
+]

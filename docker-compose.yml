@@ -1,0 +1,92 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: agentassure-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: agentassure
+      POSTGRES_PASSWORD: agentassure_password
+      POSTGRES_DB: agentassure_prod
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U agentassure -d agentassure_prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: agentassure-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agentassure-api
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql://agentassure:agentassure_password@postgres:5432/agentassure_prod
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - ENVIRONMENT=production
+      - DEBUG=false
+      - SECRET_KEY=production_secure_secret_key_change_in_env_32chars
+    ports:
+      - "8000:8000"
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agentassure-celery-worker
+    restart: unless-stopped
+    command: ["celery", "-A", "agentassure.tasks.celery_app", "worker", "--loglevel=info", "--concurrency=2"]
+    depends_on:
+      - api
+      - redis
+      - postgres
+    environment:
+      - DATABASE_URL=postgresql://agentassure:agentassure_password@postgres:5432/agentassure_prod
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - CELERY_TASK_ALWAYS_EAGER=false
+
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: agentassure-grafana
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=agentassure
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  postgres_data:
+  redis_data:
+  grafana_data:
