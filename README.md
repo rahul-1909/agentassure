@@ -2,11 +2,21 @@
 
 Intelligent QA automation that converts production failures into CI-gated regression tests for voice and chat AI agents.
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://github.com/rahul-1909/agentassure)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Render-black?style=for-the-badge&logo=render)](https://agentassure.onrender.com/)
 [![CI Status](https://img.shields.io/github/actions/workflow/status/rahul-1909/agentassure/ci.yml?branch=main&style=flat-square&logo=github-actions)](https://github.com/rahul-1909/agentassure/actions)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776ab?style=flat-square&logo=python&logoColor=white)](https://python.org)
 [![Coverage](https://img.shields.io/badge/Coverage-87%25-brightgreen?style=flat-square)](https://github.com/rahul-1909/agentassure)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat-square)](./LICENSE)
+
+---
+
+## Live Deployment
+
+The platform is running live in production on Render:
+
+- **Web Application & Review Workbench:** [https://agentassure.onrender.com/](https://agentassure.onrender.com/)
+- **Interactive OpenAPI Documentation:** [https://agentassure.onrender.com/docs](https://agentassure.onrender.com/docs)
+- **Service Health Check:** [https://agentassure.onrender.com/health](https://agentassure.onrender.com/health)
 
 ---
 
@@ -43,7 +53,7 @@ AgentAssure connects QA feedback to CI/CD pipelines by:
 - **Backend:** Python, FastAPI, PostgreSQL, Redis, SQLAlchemy 2.0, Pydantic v2, Celery
 - **Frontend:** React 19, TypeScript/JavaScript, Tailwind CSS, wavesurfer.js (audio sync)
 - **Testing:** pytest (72 tests, 87% coverage), Locust load tests
-- **DevOps:** Docker, Docker Compose, GitHub Actions, Vercel
+- **DevOps:** Docker, Docker Compose, GitHub Actions, Render, Vercel
 
 ---
 
@@ -75,6 +85,11 @@ AgentAssure connects QA feedback to CI/CD pipelines by:
 ---
 
 ## Quick Start
+
+### Hosted Cloud Instance
+Explore the platform immediately without local setup:
+- Web Application: [https://agentassure.onrender.com/](https://agentassure.onrender.com/)
+- Interactive API Documentation: [https://agentassure.onrender.com/docs](https://agentassure.onrender.com/docs)
 
 ### Docker Compose
 ```bash
