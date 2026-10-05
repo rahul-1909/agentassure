@@ -2,9 +2,10 @@
 
 import pytest
 from sqlalchemy.orm import Session
+
+from agentassure.db.models.conversation import Conversation
 from agentassure.mining.risk_scorer import RiskScorer
 from agentassure.mining.stratified_sampler import StratifiedSampler
-from agentassure.db.models.conversation import Conversation
 
 
 def test_risk_scorer_ideal_session():
@@ -63,7 +64,9 @@ def test_risk_scorer_boundary_clamping():
 
 
 def test_stratified_sampler_partitioning(db_session: Session):
-    batch = StratifiedSampler.sample_batch(db_session, target_batch_size=3, latest_version="v2.5.0-rc1")
+    batch = StratifiedSampler.sample_batch(
+        db_session, target_batch_size=3, latest_version="v2.5.0-rc1"
+    )
     assert len(batch) > 0
     strata = [c.sample_stratum for c in batch]
     # Check that sample strata labels are assigned

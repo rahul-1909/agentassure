@@ -1,6 +1,7 @@
 """Database Engine, Session Factory, and Dependency Injection."""
 
 from typing import Generator
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -44,4 +45,5 @@ def init_db() -> None:
     """Initialize all tables defined in ORM models."""
     # Ensure all models are imported prior to creating tables
     import agentassure.db.models  # noqa: F401
+
     Base.metadata.create_all(bind=engine)

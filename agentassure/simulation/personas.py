@@ -4,7 +4,7 @@ Defines 10+ behavioral customer personas covering vernacular code-switching,
 adversarial injection, price friction, and conversational edge cases.
 """
 
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 SYNTHETIC_PERSONAS: List[Dict[str, Any]] = [
     {

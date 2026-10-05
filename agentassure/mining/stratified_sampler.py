@@ -6,10 +6,11 @@ Partitions candidate conversations into three complementary strata:
 - 15% Edge Cases (Code-switching Hinglish, interruptions, extreme loops)
 """
 
-from typing import List
 import math
+from typing import List
+
+from sqlalchemy import desc, select
 from sqlalchemy.orm import Session
-from sqlalchemy import select, desc
 
 from agentassure.config import settings
 from agentassure.db.models.conversation import Conversation

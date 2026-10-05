@@ -5,8 +5,9 @@ Formats and issues engineering tickets using the exact required schema:
  Severity: [S1-S4] | Root Cause: [attribution] | Fix: [suggestion] | Expected Impact: [X% reduction estimate]"
 """
 
-from typing import Dict, Any, Optional
 import uuid
+from typing import Any, Dict, Optional
+
 from sqlalchemy.orm import Session
 
 from agentassure.config import settings

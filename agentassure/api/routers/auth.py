@@ -1,18 +1,18 @@
 """Authentication and User Management Router."""
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from agentassure.db.session import get_db
-from agentassure.db.models.user import User
-from agentassure.schemas.auth import Token, UserLogin, UserCreate, UserResponse
-from agentassure.utils.security import (
-    verify_password,
-    get_password_hash,
-    create_access_token,
-)
 from agentassure.api.deps import get_current_user
+from agentassure.db.models.user import User
+from agentassure.db.session import get_db
+from agentassure.schemas.auth import Token, UserCreate, UserLogin, UserResponse
+from agentassure.utils.security import (
+    create_access_token,
+    get_password_hash,
+    verify_password,
+)
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 

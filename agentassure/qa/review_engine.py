@@ -4,23 +4,26 @@ Orchestrates human review sessions, turn annotations, dual-review disagreement
 detection, adjudication queues, and reviewer turnaround metrics.
 """
 
-from typing import Optional, List, Dict, Any
-from sqlalchemy.orm import Session
-from sqlalchemy import select, func
+from typing import Any, Dict, List, Optional
 
-from agentassure.db.models.conversation import Conversation, Turn
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
 from agentassure.db.models.annotation import Annotation, DisagreementReview
+from agentassure.db.models.conversation import Conversation, Turn
 from agentassure.db.models.user import User
 from agentassure.qa.calibration import CalibrationEngine
 from agentassure.qa.rubrics_manager import RubricsManager
-from agentassure.schemas.annotation import AnnotationCreate, AdjudicationRequest
+from agentassure.schemas.annotation import AdjudicationRequest, AnnotationCreate
 
 
 class ReviewEngine:
     """Core workflow logic for the QA Review Workbench."""
 
     @classmethod
-    def start_review_session(cls, db: Session, conversation_id: str, reviewer_id: str) -> Conversation:
+    def start_review_session(
+        cls, db: Session, conversation_id: str, reviewer_id: str
+    ) -> Conversation:
         """Lock or transition a conversation into an active review session.
 
         Args:

@@ -1,7 +1,9 @@
 """Slack Webhook Notifier for Critical CI Gates and Ticket Alerts."""
 
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 import httpx
+
 from agentassure.config import settings
 from agentassure.utils.logging import get_logger
 

@@ -5,21 +5,22 @@ Factual Accuracy, and Safety), conducts hypothesis testing (Chi-square, t-test),
 and formats comprehensive PR summaries.
 """
 
-from typing import List, Dict, Any, Optional
 import uuid
 from collections import defaultdict
-from sqlalchemy.orm import Session
+from typing import Any, Dict, List, Optional
+
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from agentassure.config import settings
 from agentassure.db.models.test_case import RegressionTestCase
 from agentassure.evaluation.regression_runner import RegressionRunner
 from agentassure.evaluation.statistics import SignificanceTester
 from agentassure.schemas.release_gate import (
-    GateRunRequest,
     CategoryResultSchema,
-    StatisticalSignificanceSchema,
+    GateRunRequest,
     GateRunResponse,
+    StatisticalSignificanceSchema,
 )
 
 
@@ -100,8 +101,14 @@ class GateEvaluator:
 
         for cat_name, s in cat_stats.items():
             rate = round(s["passed"] / max(1, s["total"]), 4)
-            is_critical = any(crit.lower() in cat_name.lower() for crit in settings.CRITICAL_CATEGORIES)
-            threshold = settings.CRITICAL_PASS_THRESHOLD if is_critical else settings.STANDARD_PASS_THRESHOLD
+            is_critical = any(
+                crit.lower() in cat_name.lower() for crit in settings.CRITICAL_CATEGORIES
+            )
+            threshold = (
+                settings.CRITICAL_PASS_THRESHOLD
+                if is_critical
+                else settings.STANDARD_PASS_THRESHOLD
+            )
 
             is_cat_passed = rate >= threshold
             if not is_cat_passed:
@@ -130,7 +137,7 @@ class GateEvaluator:
             baseline_failed=baseline_failed,
         )
 
-        baseline_latencies = [l + 25.0 for l in cand_latencies]  # Baseline comparison sample
+        baseline_latencies = [lat + 25.0 for lat in cand_latencies]  # Baseline comparison sample
         t_res = SignificanceTester.test_continuous_metric(
             candidate_values=cand_latencies,
             baseline_values=baseline_latencies,
@@ -213,7 +220,9 @@ class GateEvaluator:
             )
         table_content = "\n".join(rows)
 
-        stat_lines = "\n".join(f"- **{s.metric_name} ({s.test_type})**: {s.conclusion}" for s in stats)
+        stat_lines = "\n".join(
+            f"- **{s.metric_name} ({s.test_type})**: {s.conclusion}" for s in stats
+        )
 
         blocked_notice = (
             f"\n> ⚠️ **MERGE BLOCKED**: The following categories breached quality thresholds: `{', '.join(blocked)}`.\n"

@@ -1,7 +1,9 @@
 """Audit Logging Utility for Security and Regulatory Compliance."""
 
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
+
 from sqlalchemy.orm import Session
+
 from agentassure.db.models.user import AuditLog
 
 

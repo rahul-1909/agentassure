@@ -1,6 +1,7 @@
 """Pydantic v2 Schemas for Release Gating and Statistical Significance."""
 
-from typing import Optional, List
+from typing import List, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -9,7 +10,9 @@ class GateRunRequest(BaseModel):
 
     agent_version: str = Field(..., description="Target release candidate version string")
     commit_hash: Optional[str] = Field(default="head-sha", description="Git commit hash")
-    baseline_version: str = Field(default="v2.4.0", description="Production baseline to compare against")
+    baseline_version: str = Field(
+        default="v2.4.0", description="Production baseline to compare against"
+    )
     include_simulator: bool = True
     dry_run: bool = False
 

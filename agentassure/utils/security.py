@@ -7,6 +7,7 @@ Uses bcrypt directly for robust cryptography.
 from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Dict, Optional
+
 import bcrypt
 import jwt
 
@@ -39,9 +40,7 @@ def get_password_hash(password: str) -> str:
     return bcrypt.hashpw(pwd_bytes, salt).decode("utf-8")
 
 
-def create_access_token(
-    data: Dict[str, Any], expires_delta: Optional[timedelta] = None
-) -> str:
+def create_access_token(data: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
     """Generate a signed JWT access token.
 
     Args:
@@ -60,9 +59,7 @@ def create_access_token(
         )
 
     to_encode.update({"exp": expire, "iat": datetime.now(timezone.utc)})
-    encoded_jwt = jwt.encode(
-        to_encode, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM
-    )
+    encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
     return encoded_jwt
 
 
@@ -78,6 +75,4 @@ def decode_access_token(token: str) -> Dict[str, Any]:
     Raises:
         jwt.PyJWTError: If token is invalid or expired.
     """
-    return jwt.decode(
-        token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
-    )
+    return jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])

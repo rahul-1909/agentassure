@@ -5,7 +5,8 @@ and Cohen's kappa calculations:
 kappa = (P_observed - P_expected) / (1 - P_expected)
 """
 
-from typing import List, Dict, Tuple, Any
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 
 
@@ -13,9 +14,7 @@ class CalibrationEngine:
     """Computes inter-rater agreement and reviewer performance statistics."""
 
     @classmethod
-    def calculate_cohens_kappa(
-        cls, rater_a_labels: List[str], rater_b_labels: List[str]
-    ) -> float:
+    def calculate_cohens_kappa(cls, rater_a_labels: List[str], rater_b_labels: List[str]) -> float:
         """Calculate Cohen's kappa coefficient between two raters on categorical labels.
 
         Args:

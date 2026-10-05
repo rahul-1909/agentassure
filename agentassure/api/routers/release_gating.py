@@ -3,12 +3,12 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from agentassure.db.session import get_db
-from agentassure.db.models.user import User
-from agentassure.schemas.release_gate import GateRunRequest, GateRunResponse
-from agentassure.evaluation.gate_evaluator import GateEvaluator
-from agentassure.ticketing.slack_notifier import SlackNotifier
 from agentassure.api.deps import get_current_user
+from agentassure.db.models.user import User
+from agentassure.db.session import get_db
+from agentassure.evaluation.gate_evaluator import GateEvaluator
+from agentassure.schemas.release_gate import GateRunRequest, GateRunResponse
+from agentassure.ticketing.slack_notifier import SlackNotifier
 from agentassure.utils.audit import AuditLogger
 
 router = APIRouter(prefix="/release-gate", tags=["Release Gating"])

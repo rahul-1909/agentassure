@@ -1,6 +1,7 @@
 """Pydantic v2 Schemas for Personas and Simulation Runs."""
 
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional
+
 from pydantic import BaseModel, Field
 
 
@@ -18,6 +19,7 @@ class PersonaBase(BaseModel):
 
 class PersonaCreate(PersonaBase):
     """Payload to register a new persona profile."""
+
     pass
 
 

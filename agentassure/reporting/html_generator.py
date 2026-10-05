@@ -15,13 +15,16 @@ class HTMLReportGenerator:
             for cat, cnt in report.failure_distribution_by_category.items()
         )
 
-        impact_rows = "".join(
-            f"<tr><td style='padding:8px;border-bottom:1px solid #e2e8f0;'><code>{item['ticket_id']}</code></td>"
-            f"<td style='padding:8px;border-bottom:1px solid #e2e8f0;'>{item['title']}</td>"
-            f"<td style='padding:8px;border-bottom:1px solid #e2e8f0;text-align:right;'>{item['failure_rate_before']:.1f}% → {item['failure_rate_after']:.1f}%</td>"
-            f"<td style='padding:8px;border-bottom:1px solid #e2e8f0;text-align:right;color:#16a34a;'><strong>-{item['reduction_percent']:.1f}%</strong></td></tr>"
-            for item in report.before_after_fix_impact
-        ) or "<tr><td colspan='4' style='padding:12px;text-align:center;color:#64748b;'>No post-release verified tickets yet.</td></tr>"
+        impact_rows = (
+            "".join(
+                f"<tr><td style='padding:8px;border-bottom:1px solid #e2e8f0;'><code>{item['ticket_id']}</code></td>"
+                f"<td style='padding:8px;border-bottom:1px solid #e2e8f0;'>{item['title']}</td>"
+                f"<td style='padding:8px;border-bottom:1px solid #e2e8f0;text-align:right;'>{item['failure_rate_before']:.1f}% → {item['failure_rate_after']:.1f}%</td>"
+                f"<td style='padding:8px;border-bottom:1px solid #e2e8f0;text-align:right;color:#16a34a;'><strong>-{item['reduction_percent']:.1f}%</strong></td></tr>"
+                for item in report.before_after_fix_impact
+            )
+            or "<tr><td colspan='4' style='padding:12px;text-align:center;color:#64748b;'>No post-release verified tickets yet.</td></tr>"
+        )
 
         return f"""<!DOCTYPE html>
 <html lang="en">

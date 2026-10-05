@@ -9,7 +9,7 @@ Executes deterministic and semantic assertions:
 """
 
 import re
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
 
 
 class AssertionEngine:
@@ -17,7 +17,11 @@ class AssertionEngine:
 
     @classmethod
     def evaluate_rule(
-        cls, rule_type: str, parameters: Dict[str, Any], agent_response: str, latency_ms: float = 0.0
+        cls,
+        rule_type: str,
+        parameters: Dict[str, Any],
+        agent_response: str,
+        latency_ms: float = 0.0,
     ) -> Tuple[bool, str]:
         """Evaluate a single assertion rule against an agent response.
 
@@ -65,7 +69,10 @@ class AssertionEngine:
         elif rule_type == "latency_under":
             max_ms = parameters.get("max_ms", 3000.0)
             if latency_ms > max_ms:
-                return False, f"Latency {latency_ms:.1f}ms exceeded maximum allowable {max_ms:.1f}ms."
+                return (
+                    False,
+                    f"Latency {latency_ms:.1f}ms exceeded maximum allowable {max_ms:.1f}ms.",
+                )
             return True, f"Latency {latency_ms:.1f}ms is within SLA ({max_ms:.1f}ms)."
 
         elif rule_type == "no_hallucination":

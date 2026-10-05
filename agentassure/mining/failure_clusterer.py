@@ -4,9 +4,10 @@ Aggregates individual turn-level QA failure annotations into systematic,
 actionable engineering failure patterns and clusters.
 """
 
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
+from sqlalchemy import func, select
 from sqlalchemy.orm import Session
-from sqlalchemy import select, func
 
 from agentassure.db.models.annotation import Annotation
 from agentassure.db.models.ticket import FailureCluster
@@ -101,5 +102,5 @@ class FailureClusterer:
         elif fix_type == "tool_retry":
             return f"Implement exponential backoff retry and schema validation on downstream function calling tool handling '{cat_l2}'."
         elif fix_type == "asr_vocab_boost":
-            return f"Add domain keywords and transliterated vernacular phrases to ASR custom language model / vocabulary boost list."
+            return "Add domain keywords and transliterated vernacular phrases to ASR custom language model / vocabulary boost list."
         return f"Refactor dialogue state manager policy for {cat_l1}."

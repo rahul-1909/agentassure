@@ -2,6 +2,7 @@
 
 import pytest
 from click.testing import CliRunner
+
 from agentassure.cli.main import cli
 
 

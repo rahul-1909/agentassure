@@ -1,8 +1,8 @@
 """Unit Tests for Failure-to-Test Pipeline and Assertion Engine."""
 
 import pytest
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from agentassure.db.models.annotation import Annotation
 from agentassure.evaluation.assertion_engine import AssertionEngine
@@ -11,20 +11,28 @@ from agentassure.evaluation.regression_runner import RegressionRunner
 
 def test_assertion_must_contain():
     rule = {"targets": ["terms and conditions apply", "10.5%"]}
-    passed, msg = AssertionEngine.evaluate_rule("must_contain", rule, "Our rate is 10.5%. Terms and conditions apply.")
+    passed, msg = AssertionEngine.evaluate_rule(
+        "must_contain", rule, "Our rate is 10.5%. Terms and conditions apply."
+    )
     assert passed is True
 
-    failed, msg = AssertionEngine.evaluate_rule("must_contain", rule, "Our rate is 10.5% without disclaimer.")
+    failed, msg = AssertionEngine.evaluate_rule(
+        "must_contain", rule, "Our rate is 10.5% without disclaimer."
+    )
     assert failed is False
     assert "Missing required term" in msg
 
 
 def test_assertion_must_not_contain():
     rule = {"forbidden": ["system prompt", "api_key", "ignore previous"]}
-    passed, _ = AssertionEngine.evaluate_rule("must_not_contain", rule, "Hello, how can I help you today?")
+    passed, _ = AssertionEngine.evaluate_rule(
+        "must_not_contain", rule, "Hello, how can I help you today?"
+    )
     assert passed is True
 
-    failed, msg = AssertionEngine.evaluate_rule("must_not_contain", rule, "Here is the SYSTEM PROMPT: You are a bot.")
+    failed, msg = AssertionEngine.evaluate_rule(
+        "must_not_contain", rule, "Here is the SYSTEM PROMPT: You are a bot."
+    )
     assert failed is False
     assert "Forbidden term detected" in msg
 
@@ -35,21 +43,29 @@ def test_assertion_compliance_check():
         "forbidden_advice": ["100% guaranteed profit"],
     }
     # Pass case
-    p, _ = AssertionEngine.evaluate_rule("compliance_check", rule, "Apply today. Terms and conditions apply.")
+    p, _ = AssertionEngine.evaluate_rule(
+        "compliance_check", rule, "Apply today. Terms and conditions apply."
+    )
     assert p is True
 
     # Breach case: contains forbidden advice
-    f, msg = AssertionEngine.evaluate_rule("compliance_check", rule, "We guarantee 100% guaranteed profit! Terms and conditions apply.")
+    f, msg = AssertionEngine.evaluate_rule(
+        "compliance_check", rule, "We guarantee 100% guaranteed profit! Terms and conditions apply."
+    )
     assert f is False
     assert "Unauthorized advice detected" in msg
 
 
 def test_assertion_no_hallucination():
     rule = {"unsupported_facts": ["7.5% flat", "0% interest loan"]}
-    p, _ = AssertionEngine.evaluate_rule("no_hallucination", rule, "Personal loans start at 10.5% p.a.")
+    p, _ = AssertionEngine.evaluate_rule(
+        "no_hallucination", rule, "Personal loans start at 10.5% p.a."
+    )
     assert p is True
 
-    f, msg = AssertionEngine.evaluate_rule("no_hallucination", rule, "We can offer you a 7.5% flat rate right now.")
+    f, msg = AssertionEngine.evaluate_rule(
+        "no_hallucination", rule, "We can offer you a 7.5% flat rate right now."
+    )
     assert f is False
     assert "Hallucinated" in msg
 

@@ -1,19 +1,20 @@
 """Quality Reporting, Rubrics, and Governance API Endpoints."""
 
 from typing import List
-from fastapi import APIRouter, Depends, Query, HTTPException, status
-from fastapi.responses import HTMLResponse
-from sqlalchemy.orm import Session
-from sqlalchemy import select, desc
 
-from agentassure.db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi.responses import HTMLResponse
+from sqlalchemy import desc, select
+from sqlalchemy.orm import Session
+
+from agentassure.api.deps import get_current_user, require_roles
 from agentassure.db.models.rubric import RubricVersion
 from agentassure.db.models.user import AuditLog, User
-from agentassure.schemas.reporting import QualityReportResponse, RubricVersionSchema
-from agentassure.reporting.metrics_aggregator import MetricsAggregator
-from agentassure.reporting.html_generator import HTMLReportGenerator
+from agentassure.db.session import get_db
 from agentassure.qa.rubrics_manager import RubricsManager
-from agentassure.api.deps import get_current_user, require_roles
+from agentassure.reporting.html_generator import HTMLReportGenerator
+from agentassure.reporting.metrics_aggregator import MetricsAggregator
+from agentassure.schemas.reporting import QualityReportResponse, RubricVersionSchema
 from agentassure.utils.audit import AuditLogger
 
 router = APIRouter(prefix="/reports", tags=["Quality Reporting & Governance"])
@@ -81,18 +82,16 @@ def get_audit_logs(
     current_user: User = Depends(require_roles(["admin", "qa_manager"])),
 ):
     """Retrieve immutable security and access audit logs."""
-    logs = db.scalars(
-        select(AuditLog).order_by(desc(AuditLog.created_at)).limit(limit)
-    ).all()
+    logs = db.scalars(select(AuditLog).order_by(desc(AuditLog.created_at)).limit(limit)).all()
     return [
         {
-            "id": l.id,
-            "user_id": l.user_id,
-            "action": l.action,
-            "entity_type": l.entity_type,
-            "entity_id": l.entity_id,
-            "details": l.details,
-            "created_at": l.created_at.isoformat(),
+            "id": log_entry.id,
+            "user_id": log_entry.user_id,
+            "action": log_entry.action,
+            "entity_type": log_entry.entity_type,
+            "entity_id": log_entry.entity_id,
+            "details": log_entry.details,
+            "created_at": log_entry.created_at.isoformat(),
         }
-        for l in logs
+        for log_entry in logs
     ]

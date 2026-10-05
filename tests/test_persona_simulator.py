@@ -1,14 +1,14 @@
 """Unit Tests for Synthetic Persona Simulator and Voice Simulation."""
 
 import pytest
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
-from agentassure.simulation.personas import SYNTHETIC_PERSONAS
-from agentassure.simulation.voice_layer import VoiceSimulator
-from agentassure.simulation.simulator_engine import SimulatorEngine
 from agentassure.db.models.persona import PersonaProfile, SimulationRun
 from agentassure.schemas.persona import SimulationRunRequest
+from agentassure.simulation.personas import SYNTHETIC_PERSONAS
+from agentassure.simulation.simulator_engine import SimulatorEngine
+from agentassure.simulation.voice_layer import VoiceSimulator
 
 
 def test_ten_plus_personas_defined():

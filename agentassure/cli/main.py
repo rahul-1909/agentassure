@@ -9,19 +9,21 @@ Local engineering tools for:
 """
 
 import sys
-import click
 from pathlib import Path
 
-from agentassure.db.session import init_db as db_init, SessionLocal
+import click
+
 from agentassure.db.seed_data import seed_database
-from agentassure.evaluation.regression_runner import RegressionRunner
+from agentassure.db.session import SessionLocal
+from agentassure.db.session import init_db as db_init
 from agentassure.evaluation.gate_evaluator import GateEvaluator
+from agentassure.evaluation.regression_runner import RegressionRunner
 from agentassure.mining.stratified_sampler import StratifiedSampler
-from agentassure.simulation.simulator_engine import SimulatorEngine
-from agentassure.reporting.metrics_aggregator import MetricsAggregator
 from agentassure.reporting.html_generator import HTMLReportGenerator
-from agentassure.schemas.release_gate import GateRunRequest
+from agentassure.reporting.metrics_aggregator import MetricsAggregator
 from agentassure.schemas.persona import SimulationRunRequest
+from agentassure.schemas.release_gate import GateRunRequest
+from agentassure.simulation.simulator_engine import SimulatorEngine
 
 
 @click.group()
@@ -67,8 +69,12 @@ def convert_failure(annotation_id: str, title: str):
 
 
 @cli.command("run-simulation")
-@click.option("--persona", "persona_key", default="price_sensitive_haggler", help="Persona profile key.")
-@click.option("--version", "agent_version", default="v2.5.0-candidate", help="Target agent version.")
+@click.option(
+    "--persona", "persona_key", default="price_sensitive_haggler", help="Persona profile key."
+)
+@click.option(
+    "--version", "agent_version", default="v2.5.0-candidate", help="Target agent version."
+)
 @click.option("--turns", default=4, help="Maximum dialogue turns.")
 @click.option("--voice", is_flag=True, default=False, help="Enable acoustic ASR jitter simulation.")
 def run_simulation(persona_key: str, agent_version: str, turns: int, voice: bool):
@@ -85,7 +91,9 @@ def run_simulation(persona_key: str, agent_version: str, turns: int, voice: bool
         status_color = "red" if sim_run.surfaced_failure else "green"
         click.secho(f"\nSimulation Complete (Run ID: {sim_run.id})", fg="cyan", bold=True)
         click.echo(f"Persona: {persona_key} | Agent Version: {agent_version}")
-        click.echo(f"Total Turns: {sim_run.total_turns} | Avg Latency: {sim_run.latency_avg_ms:.1f}ms")
+        click.echo(
+            f"Total Turns: {sim_run.total_turns} | Avg Latency: {sim_run.latency_avg_ms:.1f}ms"
+        )
         click.secho(
             f"Surfaced Failure: {sim_run.surfaced_failure} (Category: {sim_run.failure_category or 'None'})",
             fg=status_color,
@@ -105,7 +113,9 @@ def run_simulation(persona_key: str, agent_version: str, turns: int, voice: bool
 
 
 @cli.command("run-gate")
-@click.option("--version", "agent_version", default="v2.5.0-candidate", help="Candidate release version.")
+@click.option(
+    "--version", "agent_version", default="v2.5.0-candidate", help="Candidate release version."
+)
 @click.option("--baseline", default="v2.4.0", help="Production baseline version.")
 @click.option("--commit", "commit_hash", default="local-head", help="Commit hash.")
 def run_release_gate(agent_version: str, baseline: str, commit_hash: str):
@@ -120,14 +130,22 @@ def run_release_gate(agent_version: str, baseline: str, commit_hash: str):
         report = GateEvaluator.evaluate_gate(db, req)
 
         gate_color = "green" if report.status == "PASSED" else "red"
-        click.secho(f"\n==========================================", fg=gate_color)
+        click.secho("\n==========================================", fg=gate_color)
         click.secho(f"RELEASE GATE DECISION: {report.status}", fg=gate_color, bold=True)
-        click.secho(f"==========================================", fg=gate_color)
-        click.echo(f"Candidate: {report.agent_version} | Baseline: {report.baseline_pass_rate*100:.1f}%")
-        click.echo(f"Overall Pass Rate: {report.overall_pass_rate*100:.1f}% (Delta: {report.delta_pass_rate*100:+.1f}%)")
+        click.secho("==========================================", fg=gate_color)
+        click.echo(
+            f"Candidate: {report.agent_version} | Baseline: {report.baseline_pass_rate*100:.1f}%"
+        )
+        click.echo(
+            f"Overall Pass Rate: {report.overall_pass_rate*100:.1f}% (Delta: {report.delta_pass_rate*100:+.1f}%)"
+        )
 
         if report.blocked_categories:
-            click.secho(f"[ALERT] BLOCKED CATEGORIES: {', '.join(report.blocked_categories)}", fg="red", bold=True)
+            click.secho(
+                f"[ALERT] BLOCKED CATEGORIES: {', '.join(report.blocked_categories)}",
+                fg="red",
+                bold=True,
+            )
         else:
             click.secho("[SUCCESS] All critical category thresholds (>95%) satisfied!", fg="green")
 
@@ -162,8 +180,12 @@ def generate_report(html: bool, output: str):
     try:
         report = MetricsAggregator.generate_report(db)
         click.echo(f"Generated report for {report.report_date}")
-        click.echo(f"Reviewed: {report.reviewed_conversations}/{report.total_conversations} ({report.conversation_coverage_pct}%)")
-        click.echo(f"SLA Compliance: {report.review_sla_compliance_pct}% | Inter-Rater Kappa: {report.inter_rater_kappa_overall:.2f}")
+        click.echo(
+            f"Reviewed: {report.reviewed_conversations}/{report.total_conversations} ({report.conversation_coverage_pct}%)"
+        )
+        click.echo(
+            f"SLA Compliance: {report.review_sla_compliance_pct}% | Inter-Rater Kappa: {report.inter_rater_kappa_overall:.2f}"
+        )
 
         if html:
             html_text = HTMLReportGenerator.render(report)

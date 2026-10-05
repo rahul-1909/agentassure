@@ -1,24 +1,25 @@
 """Review Workbench API Endpoints."""
 
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import select
 
-from agentassure.db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.orm import Session
+
+from agentassure.api.deps import get_current_user, require_roles
+from agentassure.db.models.annotation import DisagreementReview
 from agentassure.db.models.conversation import Conversation
 from agentassure.db.models.user import User
-from agentassure.db.models.annotation import DisagreementReview
-from agentassure.schemas.conversation import ConversationResponse
+from agentassure.db.session import get_db
+from agentassure.qa.review_engine import ReviewEngine
 from agentassure.schemas.annotation import (
+    AdjudicationRequest,
     AnnotationCreate,
     AnnotationResponse,
-    AdjudicationRequest,
     DisagreementResponse,
     ReviewerMetricsResponse,
 )
-from agentassure.qa.review_engine import ReviewEngine
-from agentassure.api.deps import get_current_user, require_roles
+from agentassure.schemas.conversation import ConversationResponse
 from agentassure.utils.audit import AuditLogger
 
 router = APIRouter(prefix="/review", tags=["Review Workbench"])

@@ -7,19 +7,20 @@ Provides:
 - SlowAPI rate limiting setup
 """
 
-from typing import Generator, Optional, List
-from fastapi import Depends, HTTPException, status, Request
+from typing import Generator, List, Optional
+
+import jwt
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from sqlalchemy.orm import Session
 from sqlalchemy import select
-import jwt
+from sqlalchemy.orm import Session
 
 from agentassure.config import settings
-from agentassure.db.session import get_db
 from agentassure.db.models.user import User
-from agentassure.utils.security import decode_access_token, UserRole
+from agentassure.db.session import get_db
+from agentassure.utils.security import UserRole, decode_access_token
 
 # Rate limiter based on remote client IP address
 limiter = Limiter(key_func=get_remote_address, default_limits=[settings.RATE_LIMIT_DEFAULT])

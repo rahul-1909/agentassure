@@ -2,8 +2,9 @@
 
 import pytest
 from sqlalchemy.orm import Session
-from agentassure.reporting.metrics_aggregator import MetricsAggregator
+
 from agentassure.reporting.html_generator import HTMLReportGenerator
+from agentassure.reporting.metrics_aggregator import MetricsAggregator
 
 
 def test_metrics_aggregator(db_session: Session):

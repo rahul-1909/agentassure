@@ -5,10 +5,11 @@ Enforces compliance rules:
 - 90-day purge policy: irreversibly strips customer IDs, transcripts, and audio paths
 """
 
-from typing import Dict, Any
 from datetime import datetime, timedelta, timezone
-from sqlalchemy.orm import Session
+from typing import Any, Dict
+
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from agentassure.config import settings
 from agentassure.db.models.conversation import Conversation, Turn

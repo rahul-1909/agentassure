@@ -1,6 +1,7 @@
 """Pydantic v2 Schemas for Authentication and User Management."""
 
 from typing import Optional
+
 from pydantic import BaseModel, EmailStr, Field
 
 

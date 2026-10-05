@@ -4,11 +4,11 @@ Offloads long-running failure-to-test conversions, ticket dispatches,
 and periodic report generation.
 """
 
-from agentassure.tasks.celery_app import celery_app
 from agentassure.db.session import SessionLocal
 from agentassure.evaluation.regression_runner import RegressionRunner
-from agentassure.ticketing.jira_linear import TicketingClient
 from agentassure.reporting.metrics_aggregator import MetricsAggregator
+from agentassure.tasks.celery_app import celery_app
+from agentassure.ticketing.jira_linear import TicketingClient
 from agentassure.utils.logging import get_logger
 
 logger = get_logger("celery_tasks")

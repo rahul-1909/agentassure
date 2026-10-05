@@ -4,8 +4,8 @@ Simulates ASR (Automatic Speech Recognition) transcription jitter,
 word error rate (WER), background acoustic noise, and TTS synthesis.
 """
 
-from typing import Dict, Any, Tuple
 import random
+from typing import Any, Dict, Tuple
 
 
 class VoiceSimulator:
@@ -21,9 +21,7 @@ class VoiceSimulator:
     }
 
     @classmethod
-    def simulate_asr(
-        cls, text: str, word_error_rate: float = 0.05
-    ) -> Tuple[str, float]:
+    def simulate_asr(cls, text: str, word_error_rate: float = 0.05) -> Tuple[str, float]:
         """Simulate ASR transcription with realistic acoustic degradation and word errors.
 
         Args:
@@ -69,10 +67,7 @@ class VoiceSimulator:
         estimated_duration = max(1.0, words_count * 0.38)  # ~150 wpm
 
         # Generate 40 normalized peak points for waveform visualization
-        peaks = [
-            round(min(1.0, max(0.05, random.gauss(0.45, 0.25))), 2)
-            for _ in range(40)
-        ]
+        peaks = [round(min(1.0, max(0.05, random.gauss(0.45, 0.25))), 2) for _ in range(40)]
 
         return {
             "duration_seconds": round(estimated_duration, 2),

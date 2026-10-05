@@ -5,7 +5,8 @@ Implements:
 - Two-sample Welch's t-test for continuous scores and latency distributions
 """
 
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 from scipy import stats
 
@@ -36,10 +37,7 @@ class SignificanceTester:
         Returns:
             Dictionary with test statistics, p-value, and significance conclusion.
         """
-        table = np.array([
-            [candidate_passed, candidate_failed],
-            [baseline_passed, baseline_failed]
-        ])
+        table = np.array([[candidate_passed, candidate_failed], [baseline_passed, baseline_failed]])
 
         # If any row is zero or counts too small, provide safe calculation
         if np.any(table.sum(axis=1) == 0):
@@ -62,8 +60,14 @@ class SignificanceTester:
         b_rate = baseline_passed / max(1, baseline_passed + baseline_failed)
 
         if is_sig:
-            direction = "statistically significant improvement" if c_rate > b_rate else "statistically significant regression"
-            conclusion = f"Delta ({c_rate*100:.1f}% vs {b_rate*100:.1f}%) is a {direction} (p={p_val:.4f})."
+            direction = (
+                "statistically significant improvement"
+                if c_rate > b_rate
+                else "statistically significant regression"
+            )
+            conclusion = (
+                f"Delta ({c_rate*100:.1f}% vs {b_rate*100:.1f}%) is a {direction} (p={p_val:.4f})."
+            )
         else:
             conclusion = f"Delta ({c_rate*100:.1f}% vs {b_rate*100:.1f}%) has no statistically significant difference (p={p_val:.4f})."
 

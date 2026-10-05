@@ -1,20 +1,21 @@
 """Persona Simulator API Endpoints."""
 
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import select, desc
 
-from agentassure.db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import desc, select
+from sqlalchemy.orm import Session
+
+from agentassure.api.deps import get_current_user
 from agentassure.db.models.persona import PersonaProfile, SimulationRun
 from agentassure.db.models.user import User
+from agentassure.db.session import get_db
 from agentassure.schemas.persona import (
     PersonaResponse,
     SimulationRunRequest,
     SimulationRunResponse,
 )
 from agentassure.simulation.simulator_engine import SimulatorEngine
-from agentassure.api.deps import get_current_user
 from agentassure.utils.audit import AuditLogger
 
 router = APIRouter(prefix="/simulator", tags=["Persona Simulator"])
@@ -27,9 +28,7 @@ def list_personas(
 ):
     """Retrieve all 10+ synthetic adversarial customer personas."""
     SimulatorEngine.sync_personas(db)
-    personas = db.scalars(
-        select(PersonaProfile).where(PersonaProfile.is_active.is_(True))
-    ).all()
+    personas = db.scalars(select(PersonaProfile).where(PersonaProfile.is_active.is_(True))).all()
     return personas
 
 

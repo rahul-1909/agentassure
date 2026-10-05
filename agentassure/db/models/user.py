@@ -1,10 +1,16 @@
 """User and Audit Log Database Models."""
 
-from typing import Optional, Dict, Any
-from sqlalchemy import String, Boolean, ForeignKey, JSON
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Dict, Optional
+
+from sqlalchemy import JSON, Boolean, ForeignKey, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from agentassure.db.base import Base, TimestampMixin, generate_uuid
+
+if TYPE_CHECKING:
+    from agentassure.db.models.annotation import Annotation
 
 
 class User(Base, TimestampMixin):
@@ -31,7 +37,9 @@ class AuditLog(Base, TimestampMixin):
     __tablename__ = "audit_logs"
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
-    user_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    user_id: Mapped[Optional[str]] = mapped_column(
+        String(36), ForeignKey("users.id", ondelete="SET NULL"), nullable=True
+    )
     action: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     entity_type: Mapped[str] = mapped_column(String(100), index=True, nullable=False)
     entity_id: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)

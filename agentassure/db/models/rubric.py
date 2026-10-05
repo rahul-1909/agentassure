@@ -1,10 +1,16 @@
 """Rubric Versioning and Calibration Models."""
 
-from typing import Optional
-from sqlalchemy import String, Boolean, Float, Integer, ForeignKey, Text
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Optional
+
+from sqlalchemy import Boolean, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from agentassure.db.base import Base, TimestampMixin, generate_uuid
+
+if TYPE_CHECKING:
+    from agentassure.db.models.user import User
 
 
 class RubricVersion(Base, TimestampMixin):
@@ -17,7 +23,9 @@ class RubricVersion(Base, TimestampMixin):
     description: Mapped[str] = mapped_column(String(255), nullable=False)
     content_yaml: Mapped[str] = mapped_column(Text, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
-    created_by_id: Mapped[Optional[str]] = mapped_column(String(36), ForeignKey("users.id"), nullable=True)
+    created_by_id: Mapped[Optional[str]] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=True
+    )
 
 
 class ReviewerCalibration(Base, TimestampMixin):
@@ -33,7 +41,9 @@ class ReviewerCalibration(Base, TimestampMixin):
     gold_standard_count: Mapped[int] = mapped_column(Integer, default=0)
     agreed_count: Mapped[int] = mapped_column(Integer, default=0)
     kappa_score: Mapped[float] = mapped_column(Float, default=0.0)
-    status: Mapped[str] = mapped_column(String(30), default="passed", index=True)  # passed (kappa > 0.80), needs_training
+    status: Mapped[str] = mapped_column(
+        String(30), default="passed", index=True
+    )  # passed (kappa > 0.80), needs_training
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Relationship

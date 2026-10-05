@@ -1,7 +1,8 @@
 """Failure Cluster and Closed-Loop Ticket ORM Models."""
 
-from typing import Optional, List
-from sqlalchemy import String, Boolean, Float, Integer, ForeignKey, Text
+from typing import List, Optional
+
+from sqlalchemy import Boolean, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from agentassure.db.base import Base, TimestampMixin, generate_uuid
@@ -24,7 +25,9 @@ class FailureCluster(Base, TimestampMixin):
     is_resolved: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
 
     # Relationships
-    tickets: Mapped[List["Ticket"]] = relationship("Ticket", back_populates="cluster", cascade="all, delete-orphan")
+    tickets: Mapped[List["Ticket"]] = relationship(
+        "Ticket", back_populates="cluster", cascade="all, delete-orphan"
+    )
 
 
 class Ticket(Base, TimestampMixin):
@@ -34,10 +37,15 @@ class Ticket(Base, TimestampMixin):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
     cluster_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("failure_clusters.id", ondelete="CASCADE"), index=True, nullable=False
+        String(36),
+        ForeignKey("failure_clusters.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
     )
     external_id: Mapped[str] = mapped_column(String(100), unique=True, index=True, nullable=False)
-    system_type: Mapped[str] = mapped_column(String(20), default="linear", nullable=False)  # linear, jira
+    system_type: Mapped[str] = mapped_column(
+        String(20), default="linear", nullable=False
+    )  # linear, jira
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     body: Mapped[str] = mapped_column(Text, nullable=False)
     status: Mapped[str] = mapped_column(String(50), default="open", index=True, nullable=False)

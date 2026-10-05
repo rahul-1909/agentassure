@@ -1,6 +1,7 @@
 """Pydantic v2 Schemas for Closed-Loop Ticketing and Webhooks."""
 
 from typing import Optional
+
 from pydantic import BaseModel, Field
 
 

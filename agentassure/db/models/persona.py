@@ -1,7 +1,8 @@
 """Synthetic Customer Persona and Simulation ORM Models."""
 
-from typing import Optional, List, Dict, Any
-from sqlalchemy import String, Boolean, Float, Integer, ForeignKey, JSON, Text
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import JSON, Boolean, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from agentassure.db.base import Base, TimestampMixin, generate_uuid
@@ -17,7 +18,9 @@ class PersonaProfile(Base, TimestampMixin):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     personality_traits: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=False)
-    language: Mapped[str] = mapped_column(String(20), default="en", nullable=False)  # en, hi, hinglish
+    language: Mapped[str] = mapped_column(
+        String(20), default="en", nullable=False
+    )  # en, hi, hinglish
     tone: Mapped[str] = mapped_column(String(50), default="neutral", nullable=False)
     sample_goals: Mapped[List[str]] = mapped_column(JSON, default=list, nullable=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
@@ -35,7 +38,10 @@ class SimulationRun(Base, TimestampMixin):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
     persona_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("persona_profiles.id", ondelete="CASCADE"), index=True, nullable=False
+        String(36),
+        ForeignKey("persona_profiles.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
     )
     agent_version: Mapped[str] = mapped_column(String(50), index=True, nullable=False)
     total_turns: Mapped[int] = mapped_column(Integer, default=0)

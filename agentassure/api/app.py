@@ -2,6 +2,7 @@
 
 from contextlib import asynccontextmanager
 from pathlib import Path
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -9,21 +10,21 @@ from fastapi.staticfiles import StaticFiles
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
-from agentassure.config import settings
-from agentassure.db.session import init_db, SessionLocal
-from agentassure.db.seed_data import seed_database
 from agentassure.api.deps import limiter
 from agentassure.api.routers import (
-    health_router,
     auth_router,
+    failure_router,
+    health_router,
+    release_gate_router,
+    reporting_router,
     review_router,
     sampling_router,
-    failure_router,
     simulator_router,
-    release_gate_router,
     ticketing_router,
-    reporting_router,
 )
+from agentassure.config import settings
+from agentassure.db.seed_data import seed_database
+from agentassure.db.session import SessionLocal, init_db
 from agentassure.utils.logging import get_logger
 
 logger = get_logger("app")

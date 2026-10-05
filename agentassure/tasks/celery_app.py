@@ -1,6 +1,7 @@
 """Celery Application Setup and Configuration."""
 
 from celery import Celery
+
 from agentassure.config import settings
 
 celery_app = Celery(

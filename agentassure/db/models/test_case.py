@@ -1,7 +1,8 @@
 """Regression Test Case and Test Run Result ORM Models."""
 
-from typing import Optional, List, Dict, Any
-from sqlalchemy import String, Boolean, Float, ForeignKey, JSON, Text
+from typing import Any, Dict, List, Optional
+
+from sqlalchemy import JSON, Boolean, Float, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from agentassure.db.base import Base, TimestampMixin, generate_uuid
@@ -20,7 +21,10 @@ class RegressionTestCase(Base, TimestampMixin):
         String(36), ForeignKey("turns.id", ondelete="SET NULL"), index=True, nullable=True
     )
     cluster_id: Mapped[Optional[str]] = mapped_column(
-        String(36), ForeignKey("failure_clusters.id", ondelete="SET NULL"), index=True, nullable=True
+        String(36),
+        ForeignKey("failure_clusters.id", ondelete="SET NULL"),
+        index=True,
+        nullable=True,
     )
 
     title: Mapped[str] = mapped_column(String(255), nullable=False)
@@ -37,7 +41,9 @@ class RegressionTestCase(Base, TimestampMixin):
     fix_suggestion: Mapped[str] = mapped_column(Text, nullable=False)
 
     # Structured Assertions: list of dicts with {"type": "...", "params": {...}}
-    assertion_rules: Mapped[List[Dict[str, Any]]] = mapped_column(JSON, default=list, nullable=False)
+    assertion_rules: Mapped[List[Dict[str, Any]]] = mapped_column(
+        JSON, default=list, nullable=False
+    )
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, index=True)
 
@@ -54,7 +60,10 @@ class TestRunResult(Base, TimestampMixin):
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True, default=generate_uuid)
     test_case_id: Mapped[str] = mapped_column(
-        String(36), ForeignKey("regression_test_cases.id", ondelete="CASCADE"), index=True, nullable=False
+        String(36),
+        ForeignKey("regression_test_cases.id", ondelete="CASCADE"),
+        index=True,
+        nullable=False,
     )
     run_id: Mapped[str] = mapped_column(String(64), index=True, nullable=False)
     commit_hash: Mapped[Optional[str]] = mapped_column(String(64), index=True, nullable=True)
@@ -65,4 +74,6 @@ class TestRunResult(Base, TimestampMixin):
     failure_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     # Relationship
-    test_case: Mapped["RegressionTestCase"] = relationship("RegressionTestCase", back_populates="test_runs")
+    test_case: Mapped["RegressionTestCase"] = relationship(
+        "RegressionTestCase", back_populates="test_runs"
+    )

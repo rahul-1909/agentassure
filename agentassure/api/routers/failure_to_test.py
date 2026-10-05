@@ -1,27 +1,30 @@
 """Failure-to-Test Pipeline API Endpoints."""
 
 from typing import List, Optional
-from fastapi import APIRouter, Depends, Query, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import select, func
 
-from agentassure.db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import func, select
+from sqlalchemy.orm import Session
+
+from agentassure.api.deps import get_current_user
 from agentassure.db.models.test_case import RegressionTestCase
 from agentassure.db.models.user import User
+from agentassure.db.session import get_db
+from agentassure.evaluation.regression_runner import RegressionRunner
 from agentassure.schemas.test_case import (
     TestCaseCreate,
-    TestCaseResponse,
     TestCaseListResponse,
+    TestCaseResponse,
     TestRunResultSchema,
 )
-from agentassure.evaluation.regression_runner import RegressionRunner
-from agentassure.api.deps import get_current_user
 from agentassure.utils.audit import AuditLogger
 
 router = APIRouter(prefix="/failures", tags=["Failure-to-Test Pipeline"])
 
 
-@router.post("/convert/{annotation_id}", response_model=TestCaseResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/convert/{annotation_id}", response_model=TestCaseResponse, status_code=status.HTTP_201_CREATED
+)
 def convert_failure_to_test(
     annotation_id: str,
     title: Optional[str] = None,
@@ -70,9 +73,7 @@ def run_regression_suite(
     current_user: User = Depends(get_current_user),
 ):
     """Run all active regression test cases against specified candidate agent version."""
-    results = RegressionRunner.run_suite(
-        db, agent_version=agent_version, commit_hash=commit_hash
-    )
+    results = RegressionRunner.run_suite(db, agent_version=agent_version, commit_hash=commit_hash)
     AuditLogger.log_action(
         db,
         action="run_regression_suite",

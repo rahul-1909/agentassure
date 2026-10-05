@@ -5,10 +5,11 @@ and supports instant rollback for QA governance.
 """
 
 from pathlib import Path
-from typing import Dict, Any, List, Optional
+from typing import Any, Dict, List, Optional
+
 import yaml
-from sqlalchemy.orm import Session
 from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from agentassure.config import settings
 from agentassure.db.models.rubric import RubricVersion
@@ -92,9 +93,7 @@ class RubricsManager:
         for f in config_dir.glob("rubrics_*.yaml"):
             rubric_dict = cls.load_yaml_rubric(f)
             v_tag = rubric_dict.get("version", "v1.0")
-            existing = db.scalar(
-                select(RubricVersion).where(RubricVersion.version_tag == v_tag)
-            )
+            existing = db.scalar(select(RubricVersion).where(RubricVersion.version_tag == v_tag))
             raw_yaml = yaml.dump(rubric_dict)
 
             if not existing:
@@ -108,6 +107,6 @@ class RubricsManager:
             else:
                 existing.content_yaml = raw_yaml
                 existing.description = rubric_dict.get("description", existing.description)
-                existing.is_active = (v_tag == cls._active_version_tag)
+                existing.is_active = v_tag == cls._active_version_tag
 
         db.commit()

@@ -6,6 +6,7 @@ All configuration parameters can be overridden via environment variables or .env
 
 from pathlib import Path
 from typing import List
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 

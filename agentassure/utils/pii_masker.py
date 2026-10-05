@@ -20,9 +20,7 @@ class PIIMasker:
         # Payment Cards (13 to 19 digits with optional spaces or dashes)
         (
             "PAYMENT_CARD",
-            re.compile(
-                r"\b(?:\d{4}[ -]?){3}\d{4}\b|\b(?:\d{4}[ -]?){2}\d{4}[ -]?\d{3}\b"
-            ),
+            re.compile(r"\b(?:\d{4}[ -]?){3}\d{4}\b|\b(?:\d{4}[ -]?){2}\d{4}[ -]?\d{3}\b"),
             "[MASKED_CARD]",
         ),
         # Indian Aadhaar (12 digits, grouped 4-4-4 or continuous)
@@ -40,17 +38,13 @@ class PIIMasker:
         # Email Address (supports any length TLD like .internal, .software, .co.in)
         (
             "EMAIL",
-            re.compile(
-                r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"
-            ),
+            re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"),
             "[MASKED_EMAIL]",
         ),
         # Phone Numbers (+91-9876543210, 09876543210, 98765-43210, 9876543210)
         (
             "PHONE",
-            re.compile(
-                r"(?:\+91[\-\s]?)?(?:0)?[6-9]\d{4}[\-\s]?\d{5}\b"
-            ),
+            re.compile(r"(?:\+91[\-\s]?)?(?:0)?[6-9]\d{4}[\-\s]?\d{5}\b"),
             "[MASKED_PHONE]",
         ),
     ]

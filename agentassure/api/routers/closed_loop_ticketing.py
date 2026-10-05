@@ -1,22 +1,23 @@
 """Closed-Loop Ticketing API Endpoints."""
 
 from typing import List
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from sqlalchemy import select, desc
 
-from agentassure.db.session import get_db
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import desc, select
+from sqlalchemy.orm import Session
+
+from agentassure.api.deps import get_current_user
 from agentassure.db.models.ticket import FailureCluster, Ticket
 from agentassure.db.models.user import User
+from agentassure.db.session import get_db
+from agentassure.mining.failure_clusterer import FailureClusterer
 from agentassure.schemas.ticket import (
     FailureClusterResponse,
     TicketCreate,
     TicketResponse,
     WebhookCallbackPayload,
 )
-from agentassure.mining.failure_clusterer import FailureClusterer
 from agentassure.ticketing.jira_linear import TicketingClient
-from agentassure.api.deps import get_current_user
 from agentassure.utils.audit import AuditLogger
 
 router = APIRouter(prefix="/tickets", tags=["Closed-Loop Ticketing"])
