@@ -63,6 +63,9 @@ def get_conversation(
 
 
 @router.post("/annotation", response_model=AnnotationResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/annotations/submit", response_model=AnnotationResponse, status_code=status.HTTP_201_CREATED
+)
 def submit_annotation(
     payload: AnnotationCreate,
     db: Session = Depends(get_db),
@@ -82,6 +85,45 @@ def submit_annotation(
         return annotation
     except ValueError as e:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e))
+
+
+@router.get("/annotations")
+def list_annotations(
+    conversation_id: str = None,
+    limit: int = 50,
+    offset: int = 0,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """List annotations with pagination and optional conversation_id filter."""
+    from agentassure.db.models.annotation import Annotation
+
+    query = select(Annotation)
+    if conversation_id:
+        query = query.where(Annotation.conversation_id == conversation_id)
+    total = len(db.scalars(query).all())
+    items = db.scalars(query.offset(offset).limit(limit)).all()
+    return {
+        "total": total,
+        "limit": limit,
+        "offset": offset,
+        "annotations": [
+            {
+                "id": a.id,
+                "conversation_id": a.conversation_id,
+                "turn_id": a.turn_id,
+                "reviewer_id": a.reviewer_id,
+                "failure_category_l1": a.failure_category_l1,
+                "failure_category_l2": a.failure_category_l2,
+                "severity": a.severity,
+                "root_cause_notes": a.root_cause_notes,
+                "fix_type": a.fix_type,
+                "review_duration_seconds": a.review_duration_seconds,
+                "created_at": a.created_at.isoformat() if a.created_at else None,
+            }
+            for a in items
+        ],
+    }
 
 
 @router.get("/disagreements", response_model=List[DisagreementResponse])

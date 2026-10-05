@@ -12,6 +12,7 @@ from slowapi.errors import RateLimitExceeded
 
 from agentassure.api.deps import limiter
 from agentassure.api.routers import (
+    audio_router,
     auth_router,
     failure_router,
     health_router,
@@ -20,6 +21,7 @@ from agentassure.api.routers import (
     review_router,
     sampling_router,
     simulator_router,
+    test_cases_router,
     ticketing_router,
 )
 from agentassure.config import settings
@@ -76,12 +78,12 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Global Exception Handler
+    # Global Exception Handlers
     @application.exception_handler(ValueError)
     async def value_error_handler(request: Request, exc: ValueError):
         return JSONResponse(
             status_code=400,
-            content={"detail": str(exc)},
+            content={"error": "value_error", "detail": str(exc)},
         )
 
     # Mount Routers
@@ -95,6 +97,8 @@ def create_app() -> FastAPI:
     application.include_router(release_gate_router, prefix=api_prefix)
     application.include_router(ticketing_router, prefix=api_prefix)
     application.include_router(reporting_router, prefix=api_prefix)
+    application.include_router(audio_router, prefix=api_prefix)
+    application.include_router(test_cases_router, prefix=api_prefix)
 
     # Serve built React UI if available
     dist_dir = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"

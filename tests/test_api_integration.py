@@ -199,3 +199,28 @@ def test_api_quality_reports_and_rubrics(client: TestClient, auth_headers):
     audit_res = client.get("/api/v1/reports/audit-logs", headers=auth_headers)
     assert audit_res.status_code == 200
     assert isinstance(audit_res.json(), list)
+
+
+def test_api_audio_streaming(client: TestClient, auth_headers):
+    """Verify audio waveform WAV streaming endpoint."""
+    res = client.get("/api/v1/audio/conv-test-audio-123")
+    assert res.status_code == 200
+    assert "audio/wav" in res.headers["content-type"]
+    assert len(res.content) > 1000
+
+
+def test_api_test_cases_crud_and_annotations(client: TestClient, auth_headers):
+    """Verify test cases CRUD and annotations listing endpoints."""
+    # List test cases
+    tc_res = client.get("/api/v1/test-cases", headers=auth_headers)
+    assert tc_res.status_code == 200
+    tc_data = tc_res.json()
+    assert "items" in tc_data
+    assert "total" in tc_data
+
+    # List annotations
+    ann_res = client.get("/api/v1/review/annotations", headers=auth_headers)
+    assert ann_res.status_code == 200
+    ann_data = ann_res.json()
+    assert "annotations" in ann_data
+    assert "total" in ann_data

@@ -20,6 +20,7 @@ from agentassure.schemas.test_case import (
 from agentassure.utils.audit import AuditLogger
 
 router = APIRouter(prefix="/failures", tags=["Failure-to-Test Pipeline"])
+test_cases_router = APIRouter(prefix="/test-cases", tags=["Test Cases"])
 
 
 @router.post(
@@ -48,9 +49,13 @@ def convert_failure_to_test(
 
 
 @router.get("/tests", response_model=TestCaseListResponse)
+@router.get("/test-cases", response_model=TestCaseListResponse)
+@test_cases_router.get("", response_model=TestCaseListResponse)
 def list_test_cases(
     category_l1: Optional[str] = None,
     severity: Optional[str] = None,
+    limit: int = 50,
+    offset: int = 0,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
 ):
@@ -61,8 +66,71 @@ def list_test_cases(
     if severity:
         query = query.where(RegressionTestCase.severity == severity)
 
-    cases = db.scalars(query).all()
-    return TestCaseListResponse(items=cases, total=len(cases))
+    all_cases = db.scalars(query).all()
+    total = len(all_cases)
+    cases = db.scalars(query.offset(offset).limit(limit)).all()
+    return TestCaseListResponse(items=cases, total=total)
+
+
+@router.get("/test-cases/{test_case_id}", response_model=TestCaseResponse)
+@test_cases_router.get("/{test_case_id}", response_model=TestCaseResponse)
+def get_test_case(
+    test_case_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Retrieve detailed regression test case specifications and assertions."""
+    test_case = db.get(RegressionTestCase, test_case_id)
+    if not test_case:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Test case '{test_case_id}' not found.",
+        )
+    return test_case
+
+
+@router.put("/test-cases/{test_case_id}", response_model=TestCaseResponse)
+@test_cases_router.put("/{test_case_id}", response_model=TestCaseResponse)
+def update_test_case(
+    test_case_id: str,
+    title: Optional[str] = None,
+    expected_assertion: Optional[dict] = None,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Update regression test case assertions and metadata."""
+    test_case = db.get(RegressionTestCase, test_case_id)
+    if not test_case:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Test case '{test_case_id}' not found.",
+        )
+    if title is not None:
+        test_case.title = title
+    if expected_assertion is not None:
+        test_case.expected_assertion = expected_assertion
+    db.commit()
+    db.refresh(test_case)
+    return test_case
+
+
+@router.delete("/test-cases/{test_case_id}", status_code=status.HTTP_200_OK)
+@test_cases_router.delete("/{test_case_id}", status_code=status.HTTP_200_OK)
+def delete_test_case(
+    test_case_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    """Deactivate or soft-delete regression test case."""
+    test_case = db.get(RegressionTestCase, test_case_id)
+    if not test_case:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Test case '{test_case_id}' not found.",
+        )
+    test_case.is_active = False
+    db.commit()
+    return {"success": True, "message": f"Test case '{test_case_id}' deactivated."}
 
 
 @router.post("/tests/run", response_model=List[TestRunResultSchema])

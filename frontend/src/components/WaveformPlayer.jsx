@@ -20,13 +20,13 @@ export default function WaveformPlayer({
     // Create waveform instance
     const ws = WaveSurfer.create({
       container: containerRef.current,
-      waveColor: '#475569',
-      progressColor: '#6366f1',
-      cursorColor: '#38bdf8',
+      waveColor: '#94A3B8',
+      progressColor: '#0066FF',
+      cursorColor: '#0052CC',
       barWidth: 3,
-      barRadius: 2,
+      barRadius: 3,
       barGap: 2,
-      height: 72,
+      height: 64,
       responsive: true,
       normalize: true,
     });
@@ -124,15 +124,15 @@ export default function WaveformPlayer({
   };
 
   return (
-    <div className="bg-slate-900 border border-slate-800 rounded-xl p-4 shadow-xl">
-      <div className="flex items-center justify-between mb-3 text-xs text-slate-400 font-mono">
-        <span className="flex items-center gap-1.5 font-semibold text-slate-300">
-          <span className="w-2 h-2 rounded-full bg-indigo-500 animate-ping" />
-          Acoustic Waveform Analysis
+    <div className="bg-white border border-slate-200/90 rounded-xl p-4 shadow-sm">
+      <div className="flex items-center justify-between mb-2 text-xs text-slate-500 font-mono">
+        <span className="flex items-center gap-1.5 font-semibold text-slate-700">
+          <span className="w-2 h-2 rounded-full bg-[#0066FF] animate-pulse" />
+          Synchronized Audio Waveform
         </span>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 font-medium text-slate-600 bg-slate-100 px-2 py-0.5 rounded">
           <span>{formatTime(currentTime)}</span>
-          <span>/</span>
+          <span className="text-slate-400">/</span>
           <span>{formatTime(duration)}</span>
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function WaveformPlayer({
       {/* WaveSurfer Container */}
       <div
         ref={containerRef}
-        className="w-full bg-slate-950/60 rounded-lg p-2 border border-slate-800/80 mb-3 cursor-pointer"
+        className="w-full bg-slate-50 rounded-lg p-2 border border-slate-200/80 mb-3 cursor-pointer hover:border-slate-300 transition-colors"
       />
 
       {/* Playback Controls */}
@@ -148,38 +148,38 @@ export default function WaveformPlayer({
         <div className="flex items-center space-x-2">
           <button
             onClick={togglePlay}
-            className="p-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg shadow-md transition-all active:scale-95 flex items-center justify-center"
+            className="p-2.5 bg-[#0066FF] hover:bg-[#0052CC] text-white rounded-lg shadow-sm transition-all active:scale-95 flex items-center justify-center"
             title="Play/Pause (Space)"
           >
             {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
           </button>
           <button
             onClick={handleRestart}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-all"
+            className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-all"
             title="Restart Audio"
           >
             <RotateCcw className="w-4 h-4" />
           </button>
           <button
             onClick={toggleMute}
-            className="p-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg transition-all"
+            className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-all"
             title="Mute / Unmute"
           >
-            {isMuted ? <VolumeX className="w-4 h-4 text-red-400" /> : <Volume2 className="w-4 h-4" />}
+            {isMuted ? <VolumeX className="w-4 h-4 text-rose-500" /> : <Volume2 className="w-4 h-4" />}
           </button>
         </div>
 
         <div className="flex items-center space-x-2">
           <button
             onClick={cycleSpeed}
-            className="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1"
+            className="px-2.5 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-xs font-mono font-semibold transition-all flex items-center gap-1"
             title="Cycle Playback Rate"
           >
-            <FastForward className="w-3.5 h-3.5 text-indigo-400" />
+            <FastForward className="w-3.5 h-3.5 text-[#0066FF]" />
             {playbackRate}x
           </button>
-          <span className="text-[11px] text-slate-500 hidden sm:inline">
-            Shortcuts: <kbd className="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-slate-300">Space</kbd> Play/Pause
+          <span className="text-[11px] text-slate-400 hidden sm:inline">
+            Shortcuts: <kbd className="px-1.5 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-600">Space</kbd> Play/Pause
           </span>
         </div>
       </div>
